@@ -8,7 +8,8 @@ import (
 
 // Router serves https
 type Router struct {
-	handlers map[string]func(w http.ResponseWriter, r *http.Request)
+	ContentType string
+	handlers    map[string]func(w http.ResponseWriter, r *http.Request)
 }
 
 // NewRouter initializes and returns a new router
@@ -16,6 +17,10 @@ func NewRouter() *Router {
 	router := new(Router)
 	router.handlers = make(map[string]func(w http.ResponseWriter, r *http.Request))
 	return router
+}
+
+func (s *Router) SetContentType(t string) {
+	s.ContentType = t
 }
 
 // handles all incoming request by passing the request to the
@@ -26,6 +31,7 @@ func (s *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		bad(w)
 		return
 	}
+	w.Header().Set("Content-Type", s.ContentType)
 	f(w, r)
 }
 
